@@ -2,17 +2,15 @@ const TOTAL_FIGURINHAS = 1000;
 const FIGURINHAS_POR_PACOTE = 8;
 
 const botaoAbrir = document.getElementById('btn-abrir');
+const botaoReset = document.getElementById('btn-reset'); // Novo botão
 const containerPacote = document.getElementById('pacote-aberto');
 const txtPlacar = document.getElementById('placar-progresso');
 
-// --- SISTEMA DE INVENTÁRIO (MEMÓRIA DO NAVEGADOR) ---
-// Tenta carregar o álbum salvo. Se não existir, cria um do zero vazio.
 let albumSalvo = JSON.parse(localStorage.getItem('meuAlbum')) || {
     coladas: [],
     repetidas: []
 };
 
-// Atualiza o placar assim que o site abre
 atualizarPlacar();
 
 function gerarFigurinhaAleatoria() {
@@ -29,21 +27,16 @@ function abrirPacotinho() {
     
     for (let i = 0; i < FIGURINHAS_POR_PACOTE; i++) {
         let figurinha = gerarFigurinhaAleatoria();
-        
-        // --- LOGICA DE COLAR OU REPETIR ---
         let statusTexto = "";
         
-        // Se a figurinha NÃO está na lista de coladas, ela é colada agora!
         if (!albumSalvo.coladas.includes(figurinha.id)) {
             albumSalvo.coladas.push(figurinha.id);
             statusTexto = "<b style='color: green;'>¡NOVA!</b>";
         } else {
-            // Se já tem, vai para a pilha de repetidas
             albumSalvo.repetidas.push(figurinha.id);
             statusTexto = "<b style='color: orange;'>REPETIDA</b>";
         }
         
-        // Criando o card visual
         let card = document.createElement('div');
         card.classList.add('figurinha-card');
         if (figurinha.raridade === "Lenda") card.classList.add('Lenda');
@@ -57,10 +50,7 @@ function abrirPacotinho() {
         containerPacote.appendChild(card);
     }
 
-    // Salva as listas atualizadas na memória do navegador
     localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
-    
-    // Atualiza os números no topo da tela
     atualizarPlacar();
 }
 
@@ -70,4 +60,26 @@ function atualizarPlacar() {
     txtPlacar.innerText = `Progresso: ${totalColadas} / ${TOTAL_FIGURINHAS} (${porcentagem}%) | Repetidas na sacola: ${albumSalvo.repetidas.length}`;
 }
 
+// --- FUNÇÃO DE RESETAR O ÁLBUM ---
+function resetarAlbum() {
+    // Abre um aviso na tela para confirmar a ação
+    let certeza = confirm("Tem certeza que deseja resetar todo o seu álbum? Você perderá todas as suas figurinhas!");
+    
+    if (certeza) {
+        // Limpa as listas na memória
+        albumSalvo = {
+            coladas: [],
+            repetidas: []
+        };
+        
+        // Salva o álbum vazio e limpa a tela de figurinhas abertas
+        localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
+        containerPacote.innerHTML = "";
+        
+        // Atualiza o topo da tela para 0
+        atualizarPlacar();
+    }
+}
+
 botaoAbrir.addEventListener('click', abrirPacotinho);
+botaoReset.addEventListener('click', resetarAlbum); // Vincula o botão de reset à função
