@@ -25,36 +25,42 @@ const admAddPts = document.getElementById('adm-add-pts');
 const admIdFig = document.getElementById('adm-id-fig');
 const admBtnFig = document.getElementById('adm-btn-fig');
 
-// Banco de dados com a nova propriedade 'naMao' (sacola de descoladas)
 let albumSalvo = JSON.parse(localStorage.getItem('meuAlbum')) || {
     coladas: [],
-    naMao: [],      // Figurinhas que ele tirou no pacote mas ainda NÃO colou
-    repetidas: [],   // Só vai para repetidas se ele tirar uma que JÁ ESTÁ COLADA ou que ele JÁ TEM NA MÃO
+    naMao: [],      
+    repetidas: [],   
     envelopes: 5,
     pontos: 100,
     ultimaColeta: null
 };
 
-// Gerar as opções de páginas no select do HTML automaticamente com as numerações certas!
+// Força a criação das opções do menu de páginas
 gerarOpcoesDePaginas();
 
+// Atualiza e desenha tudo na inicialização
 atualizarPlacar();
 verificarTempoDiario();
 renderizarGradeAlbum();
 
+// Inicia o contador do tempo real
 setInterval(verificarTempoDiario, 1000);
 
 function gerarOpcoesDePaginas() {
     seletorPagina.innerHTML = "";
     for (let p = 1; p <= TOTAL_PAGINAS; p++) {
         let de = (p - 1) * FIGURINHAS_POR_PAGINA + 1;
-        let ate = de + FIGURINHAS_POR_PAGINA - 1;
+        let limiteFim = de + FIGURINHAS_POR_PAGINA - 1;
         
         let opt = document.createElement('option');
         opt.value = p;
-        if (p === 1) opt.innerText = `Pág. 1 - Especiais (Nº ${de} a ${ate})`;
-        else if (p === TOTAL_PAGINAS) opt.innerText = `Pág. 50 - Encerramento (Nº ${de} a ${ate})`;
-        else opt.innerText = `Pág. ${p} - Seleção ${p - 1} (Nº ${de} a ${ate})`;
+        
+        if (p === 1) {
+            opt.innerText = "Pág. 1 - Especiais (Nº " + de + " a " + limiteFim + ")";
+        } else if (p === TOTAL_PAGINAS) {
+            opt.innerText = "Pág. 50 - Encerramento (Nº " + de + " a " + limiteFim + ")";
+        } else {
+            opt.innerText = "Pág. " + p + " - Seleção " + (p - 1) + " (Nº " + de + " a " + limiteFim + ")";
+        }
         
         seletorPagina.appendChild(opt);
     }
@@ -64,7 +70,7 @@ function gerarFigurinhaAleatoria() {
     let numeroSorteado = Math.floor(Math.random() * TOTAL_FIGURINHAS) + 1;
     let raridade = "Normal";
     if (numeroSorteado % 50 === 0) raridade = "Lenda";
-    return { id: numeroSorteado, nome: `Jogador #${numeroSorteado}`, raridade: raridade };
+    return { id: numeroSorteado, nome: "Jogador #" + numeroSorteado, raridade: raridade };
 }
 
 function abrirPacotinho() {
@@ -76,17 +82,14 @@ function abrirPacotinho() {
         let figurinha = gerarFigurinhaAleatoria();
         let statusTexto = "";
         
-        // Verifica se o jogador já colou OU se já tem ela guardada esperando para colar
-        let jaTemColada = albumSalvo.coladas.includes(figurinha.id);
+        let jaColada = albumSalvo.coladas.includes(figurinha.id);
         let jaTemNaMao = albumSalvo.naMao.includes(figurinha.id);
 
-        if (!jaTemColada && !jaTemNaMao) {
-            // Vai para a mão esperando colagem
+        if (!jaColada && !jaTemNaMao) {
             albumSalvo.naMao.push(figurinha.id);
             statusTexto = "<b style='color: #2f5597;'>MÃO (A COLAR)</b>";
             albumSalvo.pontos += 2; 
         } else {
-            // Se já está colada ou já está na mão, vira repetida direta
             albumSalvo.repetidas.push(figurinha.id);
             statusTexto = "<b style='color: orange;'>REPETIDA</b>";
             albumSalvo.pontos += 1;
@@ -109,27 +112,22 @@ function abrirPacotinho() {
     renderizarGradeAlbum();
 }
 
-// --- FUNÇÃO PARA COLAR MANUALMENTE ---
 function colarFigurinha(id) {
-    // Só deixa colar se estiver na mão do jogador
     if (albumSalvo.naMao.includes(id)) {
-        // Remove da mão
-        albumSalvo.naMao = albumSalvo.naMao.filter(item => item !== id);
-        // Adiciona nas coladas!
+        albumSalvo.naMao = albumSalvo.naMao.filter(function(item) { return item !== id; });
         albumSalvo.coladas.push(id);
-        
         localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
         atualizarPlacar();
-        renderizarGradeAlbum(); // Redesenha para atualizar visual do slot
+        renderizarGradeAlbum();
     }
 }
 
 function renderizarGradeAlbum() {
     gradeAlbum.innerHTML = "";
-    let paginaAtual = parseInt(seletorPagina.value);
+    let paginaAtual = parseInt(seletorPagina.value) || 1;
     
-    // Agora o cálculo usa o limite exato de 20 por página
-    let idInicial = (paginaAtual - 1) * FIGURINHAS_POR_PAGINA + 1;
+    let idInicial = (paginaAtual - 1) * FIGURINHAS_POR_PACOTE + 1; // Ajustado dinamicamente baseado na sua regra anterior
+    idInicial = (paginaAtual - 1) * FIGURINHAS_POR_PAGINA + 1;
     let idFinal = idInicial + (FIGURINHAS_POR_PAGINA - 1);
 
     for (let id = idInicial; id <= idFinal; id++) {
@@ -141,21 +139,20 @@ function renderizarGradeAlbum() {
         let ehLenda = (id % 50 === 0);
 
         if (jaColada) {
-            // Figurinha já colada
             if (ehLenda) {
                 slot.classList.add('colado-lenda');
-                slot.innerHTML = `<span>🌟</span><span style="font-size:10px;">#${id}</span>`;
+                slot.innerHTML = "<span>🌟</span><span style='font-size:10px;'>#" + id + "</span>";
             } else {
                 slot.classList.add('colado');
-                slot.innerHTML = `<span>⚽</span><span style="font-size:10px;">#${id}</span>`;
+                slot.innerHTML = "<span>⚽</span><span style='font-size:10px;'>#" + id + "</span>";
             }
         } else if (estaNaMao) {
-            // Tem na mão mas ainda não colou! Fica verde piscando e ganha o clique para colar
             slot.classList.add('disponivel-para-colar');
-            slot.innerHTML = `<span>#${id}</span><span class="btn-colar-texto">COLAR!</span>`;
-            slot.addEventListener('click', () => colarFigurinha(id));
+            slot.innerHTML = "<span>#" + id + "</span><span class='btn-colar-texto'>COLAR!</span>";
+            slot.addEventListener('click', function() {
+                colarFigurinha(id);
+            });
         } else {
-            // Slot vazio comum
             slot.innerText = id;
         }
         
@@ -191,7 +188,7 @@ function verificarTempoDiario() {
         const horas = Math.floor(tempoRestante / (1000 * 60 * 60));
         const minutos = Math.floor((tempoRestante % (1000 * 60 * 60)) / (1000 * 60));
         const segundos = Math.floor((tempoRestante % (1000 * 60)) / 1000);
-        botaoDiario.innerText = `Próximo pacote em: ${horas}h ${minutos}m ${segundos}s`;
+        botaoDiario.innerText = "Próximo pacote em: " + horas + "h " + minutos + "m " + segundos + "s";
     }
 }
 
@@ -206,9 +203,9 @@ function coletarDiario() {
 function atualizarPlacar() {
     let totalColadas = albumSalvo.coladas.length;
     let porcentagem = ((totalColadas / TOTAL_FIGURINHAS) * 100).toFixed(1);
-    txtPlacar.innerText = `Coladas: ${totalColadas} / ${TOTAL_FIGURINHAS} (${porcentagem}%) | Na Mão: ${albumSalvo.naMao.length} | Repetidas: ${albumSalvo.repetidas.length}`;
-    txtEnvelopes.innerText = `✉️ Envelopes: ${albumSalvo.envelopes}`;
-    txtPontos.innerText = `🪙 Pontos: ${albumSalvo.pontos}`;
+    txtPlacar.innerText = "Coladas: " + totalColadas + " / " + TOTAL_FIGURINHAS + " (" + porcentagem + "%) | Na Mão: " + albumSalvo.naMao.length + " | Repetidas: " + albumSalvo.repetidas.length;
+    txtEnvelopes.innerText = "✉️ Envelopes: " + albumSalvo.envelopes;
+    txtPontos.innerText = "🪙 Pontos: " + albumSalvo.pontos;
     botaoAbrir.disabled = albumSalvo.envelopes <= 0;
     botaoComprar.disabled = albumSalvo.pontos < PRECO_ENVELOPE;
 }
@@ -226,19 +223,23 @@ function resetarAlbum() {
 
 seletorPagina.addEventListener('change', renderizarGradeAlbum);
 
-// Ouvintes do Admin
-btnAdminTrigger.addEventListener('click', () => {
+btnAdminTrigger.addEventListener('click', function() {
     if (!adminAutenticado) {
-        if (prompt("Digite a senha:") === SEGREDO_SENHA) { adminAutenticado = true; painelAdmin.style.display = "block"; }
-    } else { painelAdmin.style.display = painelAdmin.style.display === "block" ? "none" : "block"; }
+        if (prompt("Digite a senha:") === SEGREDO_SENHA) { 
+            adminAutenticado = true; 
+            painelAdmin.style.display = "block"; 
+        }
+    } else { 
+        painelAdmin.style.display = painelAdmin.style.display === "block" ? "none" : "block"; 
+    }
 });
-admAddEnv.addEventListener('click', () => { albumSalvo.envelopes += 50; localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo)); atualizarPlacar(); });
-admAddPts.addEventListener('click', () => { albumSalvo.pontos += 500; localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo)); atualizarPlacar(); });
-admBtnFig.addEventListener('click', () => {
+
+admAddEnv.addEventListener('click', function() { albumSalvo.envelopes += 50; localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo)); atualizarPlacar(); });
+admAddPts.addEventListener('click', function() { albumSalvo.pontos += 500; localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo)); atualizarPlacar(); });
+admBtnFig.addEventListener('click', function() {
     let id = parseInt(admIdFig.value);
     if (isNaN(id) || id < 1 || id > TOTAL_FIGURINHAS) return;
     
-    // Injeta diretamente na mão do jogador para ele testar colando!
     if (!albumSalvo.coladas.includes(id) && !albumSalvo.naMao.includes(id)) {
         albumSalvo.naMao.push(id);
     } else {
