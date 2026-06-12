@@ -27,6 +27,12 @@
             border-radius: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        .botoes-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
         .pacote-btn { 
             padding: 15px 30px; 
             font-size: 18px; 
@@ -41,6 +47,21 @@
         }
         .pacote-btn:hover { 
             background-color: #5c0e25; 
+        }
+        /* Estilo do novo botão de reset */
+        .reset-btn {
+            padding: 15px 20px;
+            font-size: 16px;
+            background-color: #aaa;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .reset-btn:hover {
+            background-color: #888;
         }
         .container-figurinhas { 
             display: flex; 
@@ -78,8 +99,10 @@
     
     <div class="placar" id="placar-progresso">Progresso: 0 / 1000 (0%)</div>
     
-    <br>
-    <button class="pacote-btn" id="btn-abrir">Abrir Envelope (8 Figurinhas)</button>
+    <div class="botoes-container">
+        <button class="pacote-btn" id="btn-abrir">Abrir Envelope (8 Figurinhas)</button>
+        <button class="reset-btn" id="btn-reset">Resetar Álbum 🔄</button>
+    </div>
 
     <div class="container-figurinhas" id="pacote-aberto"></div>
 
