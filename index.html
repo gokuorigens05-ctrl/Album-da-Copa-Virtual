@@ -11,111 +11,59 @@
             background-color: #f4f4f4; 
             margin: 0;
             padding: 20px;
+            padding-bottom: 80px; /* Espaço para o botão não cobrir nada */
         }
-        h1 {
-            color: #8a1538;
-            margin-bottom: 5px;
-        }
-        .placar-container {
-            margin-bottom: 20px;
-        }
+        h1 { color: #8a1538; margin-bottom: 5px; }
+        .placar-container { margin-bottom: 20px; }
         .placar {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            background: #fff;
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin: 5px;
+            font-size: 16px; font-weight: bold; color: #333; background: #fff;
+            display: inline-block; padding: 10px 20px; border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin: 5px;
         }
-        .botoes-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
+        .botoes-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .pacote-btn { 
-            padding: 15px 30px; 
-            font-size: 18px; 
-            background-color: #8a1538; 
-            color: white; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: background 0.2s;
+            padding: 15px 30px; font-size: 18px; background-color: #8a1538; color: white; 
+            border: none; border-radius: 5px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: background 0.2s;
         }
-        .pacote-btn:hover { 
-            background-color: #5c0e25; 
-        }
-        .pacote-btn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        .loja-btn {
-            padding: 15px 25px;
-            font-size: 16px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-        .loja-btn:hover {
-            background-color: #218838;
-        }
-        .loja-btn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        .reset-btn {
-            padding: 15px 20px;
-            font-size: 16px;
-            background-color: #aaa;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-        .reset-btn:hover {
-            background-color: #888;
-        }
-        .container-figurinhas { 
-            display: flex; 
-            justify-content: center; 
-            gap: 15px; 
-            margin-top: 30px; 
-            flex-wrap: wrap; 
-        }
+        .pacote-btn:hover { background-color: #5c0e25; }
+        .pacote-btn:disabled { background-color: #ccc; cursor: not-allowed; box-shadow: none; }
+        .loja-btn { padding: 15px 25px; font-size: 16px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        .loja-btn:hover { background-color: #218838; }
+        .loja-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        .reset-btn { padding: 15px 20px; font-size: 16px; background-color: #aaa; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        .reset-btn:hover { background-color: #888; }
+        .container-figurinhas { display: flex; justify-content: center; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
         .figurinha-card { 
-            width: 130px; 
-            height: 180px; 
-            background-color: #fff; 
-            border: 2px solid #ccc; 
-            border-radius: 8px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 10px; 
-            box-shadow: 2px 2px 8px rgba(0,0,0,0.1); 
-            box-sizing: border-box;
+            width: 130px; height: 180px; background-color: #fff; border: 2px solid #ccc; border-radius: 8px; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; 
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1); box-sizing: border-box;
         }
-        .Lenda { 
-            border-color: #d4af37; 
-            background-color: #fffdf0; 
-            font-weight: bold; 
-            color: #b8860b;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        .Lenda { border-color: #d4af37; background-color: #fffdf0; font-weight: bold; color: #b8860b; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+
+        /* --- ESTILOS DO PAINEL DE ADMINISTRADOR --- */
+        .admin-btn-fixo {
+            position: fixed; bottom: 15px; right: 15px; padding: 8px 15px;
+            font-size: 12px; background-color: #333; color: #fff; border: none;
+            border-radius: 4px; cursor: pointer; opacity: 0.7; font-weight: bold;
+        }
+        .admin-btn-fixo:hover { opacity: 1; }
+        
+        .admin-painel {
+            display: none; position: fixed; bottom: 55px; right: 15px;
+            background-color: #222; color: #fff; padding: 15px; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: left; width: 220px; z-index: 1000;
+        }
+        .admin-painel h3 { margin-top: 0; color: #ffc107; font-size: 16px; margin-bottom: 10px; }
+        .admin-painel button {
+            display: block; width: 100%; padding: 8px; margin-bottom: 8px;
+            background-color: #444; color: #fff; border: none; border-radius: 4px;
+            cursor: pointer; text-align: left; font-size: 13px;
+        }
+        .admin-painel button:hover { background-color: #555; }
+        .admin-painel input {
+            width: 90%; padding: 5px; margin-bottom: 8px; border: 1px solid #555;
+            background-color: #333; color: #fff; border-radius: 4px;
         }
     </style>
 </head>
@@ -136,6 +84,18 @@
     </div>
 
     <div class="container-figurinhas" id="pacote-aberto"></div>
+
+    <div class="admin-painel" id="painel-admin">
+        <h3>🛠️ Menu do Dono</h3>
+        <button id="adm-add-env">+ 50 Envelopes</button>
+        <button id="adm-add-pts">+ 500 Pontos</button>
+        <hr style="border-color: #444;">
+        <label style="font-size: 12px; color: #aaa;">Pegar ID de Figurinha:</label>
+        <input type="number" id="adm-id-fig" placeholder="Ex: 500" min="1" max="1000">
+        <button id="adm-btn-fig" style="background-color: #ffc107; color: #000; font-weight: bold; text-align: center;">Injetar Figurinha</button>
+    </div>
+
+    <button class="admin-btn-fixo" id="btn-admin-trigger">Administrador 🔑</button>
 
     <script src="script.js"></script>
 </body>
