@@ -14,6 +14,18 @@
         }
         h1 {
             color: #8a1538;
+            margin-bottom: 5px;
+        }
+        .placar {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            background: #fff;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .pacote-btn { 
             padding: 15px 30px; 
@@ -63,8 +75,10 @@
 <body>
 
     <h1>🏆 Meu Álbum de 1000 Figurinhas 🏆</h1>
-    <p>Clique no botão abaixo para abrir seu pacote diário!</p>
     
+    <div class="placar" id="placar-progresso">Progresso: 0 / 1000 (0%)</div>
+    
+    <br>
     <button class="pacote-btn" id="btn-abrir">Abrir Envelope (8 Figurinhas)</button>
 
     <div class="container-figurinhas" id="pacote-aberto"></div>
