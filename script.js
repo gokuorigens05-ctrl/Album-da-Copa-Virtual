@@ -1,14 +1,21 @@
 const TOTAL_FIGURINHAS = 1000;
 const FIGURINHAS_POR_PACOTE = 8;
+const PRECO_ENVELOPE = 25; // Custo em pontos
 
 const botaoAbrir = document.getElementById('btn-abrir');
-const botaoReset = document.getElementById('btn-reset'); // Novo botão
+const botaoReset = document.getElementById('btn-reset');
+const botaoComprar = document.getElementById('btn-comprar'); // Novo botão
 const containerPacote = document.getElementById('pacote-aberto');
 const txtPlacar = document.getElementById('placar-progresso');
+const txtEnvelopes = document.getElementById('placar-envelopes'); // Novo texto
+const txtPontos = document.getElementById('placar-pontos'); // Novo texto
 
+// Atualizamos a estrutura do banco local para aceitar envelopes e pontos
 let albumSalvo = JSON.parse(localStorage.getItem('meuAlbum')) || {
     coladas: [],
-    repetidas: []
+    repetidas: [],
+    envelopes: 5,  // Começa com 5 grátis
+    pontos: 100    // Começa com 100 moedas
 };
 
 atualizarPlacar();
@@ -23,6 +30,14 @@ function gerarFigurinhaAleatoria() {
 }
 
 function abrirPacotinho() {
+    // SE NÃO TIVER ENVELOPES, NÃO DEIXA ABRIR
+    if (albumSalvo.envelopes <= 0) {
+        alert("Você não tem envelopes! Compre mais na lojinha ou aguarde as 24h.");
+        return;
+    }
+
+    // Gasta 1 envelope
+    albumSalvo.envelopes--;
     containerPacote.innerHTML = "";
     
     for (let i = 0; i < FIGURINHAS_POR_PACOTE; i++) {
@@ -32,9 +47,13 @@ function abrirPacotinho() {
         if (!albumSalvo.coladas.includes(figurinha.id)) {
             albumSalvo.coladas.push(figurinha.id);
             statusTexto = "<b style='color: green;'>¡NOVA!</b>";
+            // Ganha 2 pontos por colar uma figurinha nova!
+            albumSalvo.pontos += 2;
         } else {
             albumSalvo.repetidas.push(figurinha.id);
             statusTexto = "<b style='color: orange;'>REPETIDA</b>";
+            // Ganha 1 ponto mesmo se for repetida, para ajudar a comprar mais
+            albumSalvo.pontos += 1;
         }
         
         let card = document.createElement('div');
@@ -54,32 +73,49 @@ function abrirPacotinho() {
     atualizarPlacar();
 }
 
+// --- FUNÇÃO DA LOJINHA ---
+function comprarEnvelope() {
+    if (albumSalvo.pontos >= PRECO_ENVELOPE) {
+        albumSalvo.pontos -= PRECO_ENVELOPE; // Gasta os pontos
+        albumSalvo.envelopes++; // Adiciona o envelope
+        
+        localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
+        atualizarPlacar();
+    } else {
+        alert("Pontos insuficientes para comprar um envelope!");
+    }
+}
+
 function atualizarPlacar() {
     let totalColadas = albumSalvo.coladas.length;
     let porcentagem = ((totalColadas / TOTAL_FIGURINHAS) * 100).toFixed(1);
-    txtPlacar.innerText = `Progresso: ${totalColadas} / ${TOTAL_FIGURINHAS} (${porcentagem}%) | Repetidas na sacola: ${albumSalvo.repetidas.length}`;
+    
+    txtPlacar.innerText = `Progresso: ${totalColadas} / ${TOTAL_FIGURINHAS} (${porcentagem}%) | Repetidas: ${albumSalvo.repetidas.length}`;
+    
+    // Atualiza os novos textos de economia na tela
+    txtEnvelopes.innerText = `✉️ Envelopes: ${albumSalvo.envelopes}`;
+    txtPontos.innerText = `🪙 Pontos: ${albumSalvo.pontos}`;
+
+    // Desativa os botões caso o usuário não tenha recursos (evita cliques errados)
+    botaoAbrir.disabled = albumSalvo.envelopes <= 0;
+    botaoComprar.disabled = albumSalvo.pontos < PRECO_ENVELOPE;
 }
 
-// --- FUNÇÃO DE RESETAR O ÁLBUM ---
 function resetarAlbum() {
-    // Abre um aviso na tela para confirmar a ação
-    let certeza = confirm("Tem certeza que deseja resetar todo o seu álbum? Você perderá todas as suas figurinhas!");
-    
+    let certeza = confirm("Tem certeza que deseja resetar todo o seu álbum?");
     if (certeza) {
-        // Limpa as listas na memória
         albumSalvo = {
             coladas: [],
-            repetidas: []
+            repetidas: [],
+            envelopes: 5,  // Reseta para os valores iniciais
+            pontos: 100
         };
-        
-        // Salva o álbum vazio e limpa a tela de figurinhas abertas
         localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
         containerPacote.innerHTML = "";
-        
-        // Atualiza o topo da tela para 0
         atualizarPlacar();
     }
 }
 
 botaoAbrir.addEventListener('click', abrirPacotinho);
-botaoReset.addEventListener('click', resetarAlbum); // Vincula o botão de reset à função
+botaoReset.addEventListener('click', resetarAlbum);
+botaoComprar.addEventListener('click', comprarEnvelope); // Ouvinte da lojinha
