@@ -52,53 +52,49 @@
         }
         .Lenda { border-color: #d4af37; background-color: #fffdf0; font-weight: bold; color: #b8860b; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
 
-        /* --- ESTILOS DO ÁLBUM COM 20 SLOTS --- */
+        /* --- NOVOS ESTILOS DO ÁLBUM --- */
         .secao-album { margin-top: 50px; background: #fff; border-top: 4px solid #8a1538; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .secao-album h2 { color: #8a1538; }
         .seletor-pagina { padding: 8px; font-size: 16px; margin-bottom: 25px; border-radius: 5px; }
         
-        /* Como agora são só 20 figurinhas por página, a grade fica menor e mais elegante */
-        .grade-album { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; max-width: 600px; margin: 0 auto; }
+        /* Grid adaptado para exibir as 20 figurinhas de forma limpa */
+        .grade-album { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; max-width: 1000px; margin: 0 auto; }
         
-        @media (max-width: 600px) {
-            .grade-album { grid-template-columns: repeat(4, 1fr); }
-        }
-
         .slot-album { 
             aspect-ratio: 1 / 1.3; background-color: #e0e0e0; border: 2px dashed #bbb; 
             border-radius: 5px; display: flex; flex-direction: column; justify-content: center; 
             align-items: center; font-size: 14px; color: #888; font-weight: bold; transition: all 0.2s;
-            position: relative; cursor: default; padding: 5px; box-sizing: border-box;
+            padding: 5px; box-sizing: border-box;
         }
         
-        /* Estado 1: Quando a figurinha já está colada */
+        /* Estado: Já colada */
         .slot-album.colado { background-color: #007bff; border: 2px solid #0056b3; color: white; border-style: solid; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .slot-album.colado-lenda { background-color: #fffdf0; border: 2px solid #d4af37; color: #b8860b; border-style: solid; box-shadow: 0 0 8px rgba(212, 175, 55, 0.4); }
-        
-        /* Estado 2: Quando você TEM a figurinha na sacola, mas ainda NÃO colou */
+
+        /* Estado: O jogador tem a figurinha na mão mas ainda não colou no álbum */
         .slot-album.disponivel-para-colar {
             background-color: #e2f0d9;
             border: 2px dashed #385723;
             color: #385723;
             cursor: pointer;
-            animation: piscar 1.5s infinite alternate;
+            animation: piscadaFoco 1.5s infinite alternate;
         }
         .slot-album.disponivel-para-colar:hover {
             background-color: #c5e0b4;
             transform: scale(1.05);
         }
-        .btn-colar-texto {
+        .btn-colar-tag {
             font-size: 10px;
             background: #385723;
             color: white;
-            padding: 2px 6px;
+            padding: 2px 5px;
             border-radius: 3px;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
-        @keyframes piscar {
-            from { box-shadow: 0 0 2px rgba(56, 87, 35, 0.2); }
-            to { box-shadow: 0 0 10px rgba(56, 87, 35, 0.7); }
+        @keyframes piscadaFoco {
+            from { box-shadow: 0 0 2px rgba(56,87,35,0.2); }
+            to { box-shadow: 0 0 8px rgba(56,87,35,0.6); }
         }
 
         /* Admin Styles */
@@ -134,7 +130,7 @@
     <div class="container-figurinhas" id="pacote-aberto"></div>
 
     <div class="secao-album">
-        <h2>📖 Folhear Álbum (50 Páginas)</h2>
+        <h2>📖 Folhear Livro Ilustrado (50 Páginas)</h2>
         
         <label for="select-pagina">Ir para a página: </label>
         <select class="seletor-pagina" id="select-pagina">
@@ -148,7 +144,7 @@
         <button id="adm-add-env">+ 50 Envelopes</button>
         <button id="adm-add-pts">+ 500 Pontos</button>
         <hr style="border-color: #444;">
-        <label style="font-size: 12px; color: #aaa;">Mão do Jogador (Sacola ID):</label>
+        <label style="font-size: 12px; color: #aaa;">Injetar na Mão (ID):</label>
         <input type="number" id="adm-id-fig" placeholder="Ex: 500" min="1" max="1000">
         <button id="adm-btn-fig" style="background-color: #ffc107; color: #000; font-weight: bold; text-align: center;">Injetar na Mão</button>
     </div>
