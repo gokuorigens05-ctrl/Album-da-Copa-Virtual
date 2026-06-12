@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Álbum da Copa Virtual</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            background-color: #f4f4f4; 
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #8a1538;
+        }
+        .pacote-btn { 
+            padding: 15px 30px; 
+            font-size: 18px; 
+            background-color: #8a1538; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+        .pacote-btn:hover { 
+            background-color: #5c0e25; 
+        }
+        .container-figurinhas { 
+            display: flex; 
+            justify-content: center; 
+            gap: 15px; 
+            margin-top: 30px; 
+            flex-wrap: wrap; 
+        }
+        .figurinha-card { 
+            width: 130px; 
+            height: 180px; 
+            background-color: #fff; 
+            border: 2px solid #ccc; 
+            border-radius: 8px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 10px; 
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1); 
+            box-sizing: border-box;
+        }
+        .Lenda { 
+            border-color: #d4af37; 
+            background-color: #fffdf0; 
+            font-weight: bold; 
+            color: #b8860b;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+    </style>
+</head>
+<body>
 
+    <h1>🏆 Meu Álbum de 1000 Figurinhas 🏆</h1>
+    <p>Clique no botão abaixo para abrir seu pacote diário!</p>
+    
+    <button class="pacote-btn" id="btn-abrir">Abrir Envelope (8 Figurinhas)</button>
+
+    <div class="container-figurinhas" id="pacote-aberto"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
