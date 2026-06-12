@@ -5,13 +5,13 @@ const PRECO_ENVELOPE = 25;
 const botaoAbrir = document.getElementById('btn-abrir');
 const botaoReset = document.getElementById('btn-reset');
 const botaoComprar = document.getElementById('btn-comprar');
+const botaoDiario = document.getElementById('btn-diario'); // Novo botão
 const containerPacote = document.getElementById('pacote-aberto');
 const txtPlacar = document.getElementById('placar-progresso');
 const txtEnvelopes = document.getElementById('placar-envelopes');
 const txtPontos = document.getElementById('placar-pontos');
 
-// --- VARIÁVEIS E COMPONENTES DO ADMIN ---
-const SEGREDO_SENHA = "1234"; // 🔑 ALTERE SUA SENHA AQUI SE QUISER!
+const SEGREDO_SENHA = "1234";
 let adminAutenticado = false;
 const btnAdminTrigger = document.getElementById('btn-admin-trigger');
 const painelAdmin = document.getElementById('painel-admin');
@@ -24,10 +24,14 @@ let albumSalvo = JSON.parse(localStorage.getItem('meuAlbum')) || {
     coladas: [],
     repetidas: [],
     envelopes: 5,
-    pontos: 100
+    pontos: 100,
+    ultimaColeta: null // Salva o carimbo de data/hora do último resgate
 };
 
 atualizarPlacar();
+verificarTempoDiario();
+// Executa a contagem regressiva a cada 1 segundo continuamente
+setInterval(verificarTempoDiario, 1000);
 
 function gerarFigurinhaAleatoria() {
     let numeroSorteado = Math.floor(Math.random() * TOTAL_FIGURINHAS) + 1;
@@ -37,10 +41,7 @@ function gerarFigurinhaAleatoria() {
 }
 
 function abrirPacotinho() {
-    if (albumSalvo.envelopes <= 0) {
-        alert("Você não tem envelopes!");
-        return;
-    }
+    if (albumSalvo.envelopes <= 0) return;
     albumSalvo.envelopes--;
     containerPacote.innerHTML = "";
     
@@ -83,6 +84,43 @@ function comprarEnvelope() {
     }
 }
 
+// --- LÓGICA DO TEMPO REAL (24 HORAS) ---
+function verificarTempoDiario() {
+    if (!albumSalvo.ultimaColeta) {
+        botaoDiario.disabled = false;
+        botaoDiario.innerText = "Coletar Envelopes Diários 🎁";
+        return;
+    }
+
+    const agora = new Date().getTime();
+    const tempoPassado = agora - albumSalvo.ultimaColeta;
+    const vinteQuatroHoras = 24 * 60 * 60 * 1000; // Tempo em milissegundos
+
+    if (tempoPassado >= vinteQuatroHoras) {
+        botaoDiario.disabled = false;
+        botaoDiario.innerText = "Coletar Envelopes Diários 🎁";
+    } else {
+        botaoDiario.disabled = true;
+        // Calcula quanto tempo falta
+        const tempoRestante = vinteQuatroHoras - tempoPassado;
+        const horas = Math.floor(tempoRestante / (1000 * 60 * 60));
+        const minutos = Math.floor((tempoRestante % (1000 * 60 * 60)) / (1000 * 60));
+        const segundos = Math.floor((tempoRestante % (1000 * 60)) / 1000);
+        
+        botaoDiario.innerText = `Próximo pacote em: ${horas}h ${minutos}m ${segundos}s`;
+    }
+}
+
+function coletarDiario() {
+    albumSalvo.envelopes += 5; // Recompensa diária
+    albumSalvo.ultimaColeta = new Date().getTime(); // Salva o momento exato do clique
+    
+    localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
+    atualizarPlacar();
+    verificarTempoDiario();
+    alert("Você coletou seus 5 envelopes diários de presente! Volte amanhã.");
+}
+
 function atualizarPlacar() {
     let totalColadas = albumSalvo.coladas.length;
     let porcentagem = ((totalColadas / TOTAL_FIGURINHAS) * 100).toFixed(1);
@@ -95,71 +133,37 @@ function atualizarPlacar() {
 
 function resetarAlbum() {
     if (confirm("Tem certeza que deseja resetar todo o seu álbum?")) {
-        albumSalvo = { coladas: [], repetidas: [], envelopes: 5, pontos: 100 };
+        albumSalvo = { coladas: [], repetidas: [], envelopes: 5, pontos: 100, ultimaColeta: null };
         localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
         containerPacote.innerHTML = "";
         atualizarPlacar();
+        verificarTempoDiario();
     }
 }
 
-// --- LÓGICA DO MENU DO ADMINISTRADOR ---
+// Ouvintes do Admin
 btnAdminTrigger.addEventListener('click', () => {
     if (!adminAutenticado) {
-        let senhaDigitada = prompt("Digite a senha do Administrador para acessar o painel:");
-        if (senhaDigitada === SEGREDO_SENHA) {
-            adminAutenticado = true;
-            painelAdmin.style.display = "block"; // Abre a janelinha
-            alert("Acesso concedido, Chefe!");
-        } else {
-            alert("Senha incorreta!");
+        if (prompt("Digite a senha:") === SEGREDO_SENHA) {
+            adminAutenticado = true; painelAdmin.style.display = "block";
         }
     } else {
-        // Se já colocou a senha antes, clicar no botão apenas abre/fecha a janelinhas
-        if (painelAdmin.style.display === "block") {
-            painelAdmin.style.display = "none";
-        } else {
-            painelAdmin.style.display = "block";
-        }
+        painelAdmin.style.display = painelAdmin.style.display === "block" ? "none" : "block";
     }
 });
-
-// Botão de dar Envelopes
-admAddEnv.addEventListener('click', () => {
-    albumSalvo.envelopes += 50;
-    localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
-    atualizarPlacar();
-});
-
-// Botão de dar Pontos
-admAddPts.addEventListener('click', () => {
-    albumSalvo.pontos += 500;
-    localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
-    atualizarPlacar();
-});
-
-// Injetar figurinha específica no Álbum
+admAddEnv.addEventListener('click', () => { albumSalvo.envelopes += 50; localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo)); atualizarPlacar(); });
+admAddPts.addEventListener('click', () => { albumSalvo.pontos += 500; localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo)); atualizarPlacar(); });
 admBtnFig.addEventListener('click', () => {
-    let idEscolhido = parseInt(admIdFig.value);
-    
-    if (isNaN(idEscolhido) || idEscolhido < 1 || idEscolhido > TOTAL_FIGURINHAS) {
-        alert("Digite um ID válido entre 1 e 1000!");
-        return;
-    }
-
-    if (!albumSalvo.coladas.includes(idEscolhido)) {
-        albumSalvo.coladas.push(idEscolhido);
-        localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
-        atualizarPlacar();
-        alert(`Figurinha #${idEscolhido} adicionada direto no Álbum!`);
-    } else {
-        alert("Você já tem essa figurinha colada! (Adicionada às repetidas)");
-        albumSalvo.repetidas.push(idEscolhido);
-        localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
-        atualizarPlacar();
-    }
-    admIdFig.value = ""; // Limpa o campo do número
+    let id = parseInt(admIdFig.value);
+    if (isNaN(id) || id < 1 || id > TOTAL_FIGURINHAS) return;
+    if (!albumSalvo.coladas.includes(id)) albumSalvo.coladas.push(id);
+    else albumSalvo.repetidas.push(id);
+    localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
+    atualizarPlacar();
+    admIdFig.value = "";
 });
 
 botaoAbrir.addEventListener('click', abrirPacotinho);
 botaoReset.addEventListener('click', resetarAlbum);
 botaoComprar.addEventListener('click', comprarEnvelope);
+botaoDiario.addEventListener('click', coletarDiario); // Ouvinte do botão diário
