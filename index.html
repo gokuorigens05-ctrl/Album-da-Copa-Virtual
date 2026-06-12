@@ -16,22 +16,26 @@
             color: #8a1538;
             margin-bottom: 5px;
         }
+        .placar-container {
+            margin-bottom: 20px;
+        }
         .placar {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: #333;
-            margin-bottom: 20px;
             background: #fff;
             display: inline-block;
             padding: 10px 20px;
             border-radius: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin: 5px;
         }
         .botoes-container {
             display: flex;
             justify-content: center;
             gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         .pacote-btn { 
             padding: 15px 30px; 
@@ -48,7 +52,29 @@
         .pacote-btn:hover { 
             background-color: #5c0e25; 
         }
-        /* Estilo do novo botão de reset */
+        .pacote-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .loja-btn {
+            padding: 15px 25px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .loja-btn:hover {
+            background-color: #218838;
+        }
+        .loja-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
         .reset-btn {
             padding: 15px 20px;
             font-size: 16px;
@@ -97,10 +123,15 @@
 
     <h1>🏆 Meu Álbum de 1000 Figurinhas 🏆</h1>
     
-    <div class="placar" id="placar-progresso">Progresso: 0 / 1000 (0%)</div>
+    <div class="placar-container">
+        <div class="placar" id="placar-progresso">Progresso: 0 / 1000 (0%)</div>
+        <div class="placar" id="placar-envelopes">✉️ Envelopes: 5</div>
+        <div class="placar" id="placar-pontos">🪙 Pontos: 100</div>
+    </div>
     
     <div class="botoes-container">
         <button class="pacote-btn" id="btn-abrir">Abrir Envelope (8 Figurinhas)</button>
+        <button class="loja-btn" id="btn-comprar">Comprar Envelope (-25 🪙)</button>
         <button class="reset-btn" id="btn-reset">Resetar Álbum 🔄</button>
     </div>
 
