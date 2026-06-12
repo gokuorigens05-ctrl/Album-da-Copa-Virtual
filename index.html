@@ -11,15 +11,35 @@
             background-color: #f4f4f4; 
             margin: 0;
             padding: 20px;
-            padding-bottom: 80px; /* Espaço para o botão não cobrir nada */
+            padding-bottom: 80px;
         }
         h1 { color: #8a1538; margin-bottom: 5px; }
-        .placar-container { margin-bottom: 20px; }
+        .placar-container { margin-bottom: 15px; }
         .placar {
             font-size: 16px; font-weight: bold; color: #333; background: #fff;
             display: inline-block; padding: 10px 20px; border-radius: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin: 5px;
         }
+        
+        /* Estilo da Seção Diária */
+        .recompensa-container {
+            margin-bottom: 25px;
+        }
+        .diario-btn {
+            padding: 10px 20px;
+            font-size: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+        .diario-btn:hover { background-color: #0056b3; }
+        .diario-btn:disabled { background-color: #6c757d; cursor: not-allowed; box-shadow: none; }
+
         .botoes-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .pacote-btn { 
             padding: 15px 30px; font-size: 18px; background-color: #8a1538; color: white; 
@@ -41,30 +61,21 @@
         }
         .Lenda { border-color: #d4af37; background-color: #fffdf0; font-weight: bold; color: #b8860b; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
 
-        /* --- ESTILOS DO PAINEL DE ADMINISTRADOR --- */
         .admin-btn-fixo {
             position: fixed; bottom: 15px; right: 15px; padding: 8px 15px;
             font-size: 12px; background-color: #333; color: #fff; border: none;
             border-radius: 4px; cursor: pointer; opacity: 0.7; font-weight: bold;
         }
         .admin-btn-fixo:hover { opacity: 1; }
-        
         .admin-painel {
             display: none; position: fixed; bottom: 55px; right: 15px;
             background-color: #222; color: #fff; padding: 15px; border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: left; width: 220px; z-index: 1000;
         }
         .admin-painel h3 { margin-top: 0; color: #ffc107; font-size: 16px; margin-bottom: 10px; }
-        .admin-painel button {
-            display: block; width: 100%; padding: 8px; margin-bottom: 8px;
-            background-color: #444; color: #fff; border: none; border-radius: 4px;
-            cursor: pointer; text-align: left; font-size: 13px;
-        }
+        .admin-painel button { display: block; width: 100%; padding: 8px; margin-bottom: 8px; background-color: #444; color: #fff; border: none; border-radius: 4px; cursor: pointer; text-align: left; font-size: 13px; }
         .admin-painel button:hover { background-color: #555; }
-        .admin-painel input {
-            width: 90%; padding: 5px; margin-bottom: 8px; border: 1px solid #555;
-            background-color: #333; color: #fff; border-radius: 4px;
-        }
+        .admin-painel input { width: 90%; padding: 5px; margin-bottom: 8px; border: 1px solid #555; background-color: #333; color: #fff; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -75,6 +86,10 @@
         <div class="placar" id="placar-progresso">Progresso: 0 / 1000 (0%)</div>
         <div class="placar" id="placar-envelopes">✉️ Envelopes: 5</div>
         <div class="placar" id="placar-pontos">🪙 Pontos: 100</div>
+    </div>
+    
+    <div class="recompensa-container">
+        <button class="diario-btn" id="btn-diario">Coletar Envelopes Diários 🎁</button>
     </div>
     
     <div class="botoes-container">
