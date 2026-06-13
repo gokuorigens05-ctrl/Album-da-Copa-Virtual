@@ -26,7 +26,7 @@ const admAddPts = document.getElementById('adm-add-pts');
 const admIdFig = document.getElementById('adm-id-fig');
 const admBtnFig = document.getElementById('adm-btn-fig');
 
-// LISTA DE SELEÇÕES NA ORDEM EXATA INFORMADA
+// MATRIZ COMPLETA DAS SELEÇÕES EXATAMENTE NA ORDEM ENVIADA
 const SELECOES = [
     { nome: "México", sigla: "MEX" }, { nome: "South Africa", sigla: "RSA" }, { nome: "Korea Republic", sigla: "KOR" }, { nome: "Czechia", sigla: "CZE" },
     { nome: "Canada", sigla: "CAN" }, { nome: "Bosnia-Hezergovina", sigla: "BIH" }, { nome: "Qatar", sigla: "QAT" }, { nome: "Switzerland", sigla: "SUI" },
@@ -51,7 +51,7 @@ let albumSalvo = JSON.parse(localStorage.getItem('meuAlbum')) || {
     ultimaColeta: null
 };
 
-// Inicializadores
+// Inicializações básicas estruturais
 gerarOpcoesDePaginas();
 atualizarPlacar();
 verificarTempoDiario();
@@ -59,14 +59,13 @@ renderizarGradeAlbum();
 
 setInterval(verificarTempoDiario, 1000);
 
-// Função mágica para descobrir qual é o País e Sigla de qualquer ID de 1 a 1000
+// Mapeia inteligentemente os dados dinâmicos de cada ID de figurinha do jogo
 function obterInfoFigurinha(id) {
     if (id <= 20) {
         return { pais: "Fifa World Cup", sigla: "FWC", textoCard: `FWC #${id}` };
     } else if (id > 980) {
         return { pais: "Fifa World Cup", sigla: "FWC", textoCard: `FWC #${id}` };
     } else {
-        // IDs 21 a 980 pertencem às 48 seleções
         let indiceSelecao = Math.floor((id - 21) / FIGURINHAS_POR_PAGINA);
         let info = SELECOES[indiceSelecao];
         return { pais: info.nome, sigla: info.sigla, textoCard: `${info.sigla} #${id}` };
@@ -87,7 +86,7 @@ function gerarOpcoesDePaginas() {
         } else if (p === TOTAL_PAGINAS) {
             opt.innerText = `Pág. 50 - Encerramento (Nº ${de} a ${ate})`;
         } else {
-            let infoSel = SELECOES[p - 2]; // p-2 porque a página 2 é o índice 0 (México)
+            let infoSel = SELECOES[p - 2];
             opt.innerText = `Pág. ${p} - ${infoSel.nome} (${infoSel.sigla}) (Nº ${de} a ${ate})`;
         }
         seletorPagina.appendChild(opt);
@@ -97,7 +96,7 @@ function gerarOpcoesDePaginas() {
 function abrirPacotinho() {
     if (albumSalvo.envelopes <= 0) return;
     albumSalvo.envelopes--;
-    containerPacote.innerHTML = "";
+    containerPacote.innerHTML = ""; // Limpa os cards anteriores
     
     for (let i = 0; i < FIGURINHAS_POR_PACOTE; i++) {
         let numeroSorteado = Math.floor(Math.random() * TOTAL_FIGURINHAS) + 1;
@@ -111,11 +110,11 @@ function abrirPacotinho() {
 
         if (!jaColada && !jaTemNaMao) {
             albumSalvo.naMao.push(numeroSorteado);
-            statusTexto = "<b style='color: #2f5597;'>NA MÃO (A COLAR)</b>";
+            statusTexto = "<b style='color: #007bff;'>NA MÃO (A COLAR)</b>";
             albumSalvo.pontos += 2;
         } else {
             albumSalvo.repetidas.push(numeroSorteado);
-            statusTexto = "<b style='color: orange;'>REPETIDA</b>";
+            statusTexto = "<b style='color: #e67e22;'>REPETIDA</b>";
             albumSalvo.pontos += 1;
         }
         
@@ -124,10 +123,10 @@ function abrirPacotinho() {
         if (raridade === "Lenda") card.classList.add('Lenda');
         
         card.innerHTML = `
-            <span style="font-size: 20px;">${raridade === "Lenda" ? "🌟" : "⚽"}</span>
-            <h4 style="margin: 5px 0; font-size: 14px; color: #8a1538;">${infoFig.pais}</h4>
-            <h5 style="margin: 2px 0; font-size: 15px;">${infoFig.textoCard}</h5>
-            <p style="margin: 5px 0 0 0; font-size: 11px;">${statusTexto}</p>
+            <span style="font-size: 22px; margin-bottom: 5px;">${raridade === "Lenda" ? "🌟" : "⚽"}</span>
+            <h4 style="margin: 2px 0; font-size: 13px; color: #8a1538;">${infoFig.pais}</h4>
+            <h5 style="margin: 3px 0; font-size: 16px; letter-spacing: 0.5px;">${infoFig.textoCard}</h5>
+            <p style="margin: 8px 0 0 0; font-size: 11px;">${statusTexto}</p>
         `;
         containerPacote.appendChild(card);
     }
@@ -136,13 +135,32 @@ function abrirPacotinho() {
     renderizarGradeAlbum(); 
 }
 
-function colarFigurinha(id) {
+// Lógica de colagem incrementada com animação temporária de impacto visual
+function colarFigurinha(id, elementoSlot) {
     if (albumSalvo.naMao.includes(id)) {
         albumSalvo.naMao = albumSalvo.naMao.filter(item => item !== id);
         albumSalvo.coladas.push(id);
+        
         localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
         atualizarPlacar();
-        renderizarGradeAlbum();
+        
+        // Ativa a animação de impacto no slot antes de redesenhar completamente a tela
+        elementoSlot.classList.remove('disponivel-para-colar');
+        elementoSlot.classList.add('animacao-colar');
+        
+        let ehLenda = (id % 50 === 0);
+        if (ehLenda) {
+            elementoSlot.classList.add('colado-lenda');
+            elementoSlot.innerHTML = `<span>🌟</span><span style="font-size:9px;">${obterInfoFigurinha(id).textoCard}</span>`;
+        } else {
+            elementoSlot.classList.add('colado');
+            elementoSlot.innerHTML = `<span>⚽</span><span style="font-size:9px;">${obterInfoFigurinha(id).textoCard}</span>`;
+        }
+        
+        // Espera a animação do CSS terminar (500ms) para renderizar a página limpa
+        setTimeout(() => {
+            renderizarGradeAlbum();
+        }, 500);
     }
 }
 
@@ -153,7 +171,6 @@ function renderizarGradeAlbum() {
     let idInicial = (paginaAtual - 1) * FIGURINHAS_POR_PAGINA + 1;
     let idFinal = idInicial + (FIGURINHAS_POR_PAGINA - 1);
 
-    // Atualiza o letreiro do topo com o nome da Seleção atual
     if (paginaAtual === 1) {
         txtNomeSelecaoAtiva.innerText = "🏆 Página Inicial - Especiais FWC 🏆";
     } else if (paginaAtual === TOTAL_PAGINAS) {
@@ -184,10 +201,9 @@ function renderizarGradeAlbum() {
             slot.classList.add('disponivel-para-colar');
             slot.innerHTML = `<span style="font-size:10px;">${infoFig.textoCard}</span><span class="btn-colar-tag">COLAR!</span>`;
             slot.addEventListener('click', () => {
-                colarFigurinha(id);
+                colarFigurinha(id, slot);
             });
         } else {
-            // Mostra o texto limpo com a sigla e id correspondente mesmo antes de colar
             slot.innerText = infoFig.textoCard;
         }
         
@@ -196,7 +212,7 @@ function renderizarGradeAlbum() {
 }
 
 function comprarEnvelope() {
-    if (albumSalvo.pontos >= PRECO_ENVELOPE) {
+    if (albumSalvo.points >= PRECO_ENVELOPE || albumSalvo.pontos >= PRECO_ENVELOPE) {
         albumSalvo.pontos -= PRECO_ENVELOPE;
         albumSalvo.envelopes++;
         localStorage.setItem('meuAlbum', JSON.stringify(albumSalvo));
