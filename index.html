@@ -52,26 +52,24 @@
         }
         .Lenda { border-color: #d4af37; background-color: #fffdf0; font-weight: bold; color: #b8860b; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
 
-        /* --- NOVOS ESTILOS DO ÁLBUM --- */
+        /* --- ESTILOS DO ÁLBUM --- */
         .secao-album { margin-top: 50px; background: #fff; border-top: 4px solid #8a1538; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .secao-album h2 { color: #8a1538; }
+        .secao-album h2 { color: #8a1538; margin-bottom: 5px; }
+        .titulo-selecao-ativa { font-size: 22px; font-weight: bold; color: #333; margin-top: 0; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
         .seletor-pagina { padding: 8px; font-size: 16px; margin-bottom: 25px; border-radius: 5px; }
         
-        /* Grid adaptado para exibir as 20 figurinhas de forma limpa */
         .grade-album { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; max-width: 1000px; margin: 0 auto; }
         
         .slot-album { 
             aspect-ratio: 1 / 1.3; background-color: #e0e0e0; border: 2px dashed #bbb; 
             border-radius: 5px; display: flex; flex-direction: column; justify-content: center; 
-            align-items: center; font-size: 14px; color: #888; font-weight: bold; transition: all 0.2s;
+            align-items: center; font-size: 13px; color: #888; font-weight: bold; transition: all 0.2s;
             padding: 5px; box-sizing: border-box;
         }
         
-        /* Estado: Já colada */
         .slot-album.colado { background-color: #007bff; border: 2px solid #0056b3; color: white; border-style: solid; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .slot-album.colado-lenda { background-color: #fffdf0; border: 2px solid #d4af37; color: #b8860b; border-style: solid; box-shadow: 0 0 8px rgba(212, 175, 55, 0.4); }
 
-        /* Estado: O jogador tem a figurinha na mão mas ainda não colou no álbum */
         .slot-album.disponivel-para-colar {
             background-color: #e2f0d9;
             border: 2px dashed #385723;
@@ -84,7 +82,7 @@
             transform: scale(1.05);
         }
         .btn-colar-tag {
-            font-size: 10px;
+            font-size: 9px;
             background: #385723;
             color: white;
             padding: 2px 5px;
@@ -109,7 +107,7 @@
 </head>
 <body>
 
-    <h1>🏆 Meu Álbum de 1000 Figurinhas 🏆</h1>
+    <h1>🏆 Meu Álbum da Copa Virtual 🏆</h1>
     
     <div class="placar-container">
         <div class="placar" id="placar-progresso">Coladas: 0 / 1000 (0%)</div>
@@ -130,7 +128,8 @@
     <div class="container-figurinhas" id="pacote-aberto"></div>
 
     <div class="secao-album">
-        <h2>📖 Folhear Livro Ilustrado (50 Páginas)</h2>
+        <h2>📖 Livro Ilustrado Oficial</h2>
+        <div class="titulo-selecao-ativa" id="nome-selecao-ativa">Carregando...</div>
         
         <label for="select-pagina">Ir para a página: </label>
         <select class="seletor-pagina" id="select-pagina">
